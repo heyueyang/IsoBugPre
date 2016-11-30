@@ -20,8 +20,8 @@ public class AttrSelect {
 	static Instances ins;
 	static String Eval;
 	static String Search;
-	private static String data_folder = "E:/dataset/change2.0/com_net_bow_arff/";
-	private static String select_folder = "E:/dataset/change2.0/com_net_bow_arff_selected/";
+	private static String data_folder = "E:/dataset/change2.0/com_net_before_bow_arff/";
+	private static String select_folder = "E:/dataset/change2.0/com_net_before_bow_arff_selected/";
 	
 	public static void main(String[] args) throws Exception {
 		// TODO Auto-generated method stub
@@ -43,8 +43,6 @@ public class AttrSelect {
 			    	String outDir = select_folder + eval.substring(0, 5) + "_"+search.substring(0, 5) + "/";
 			    	if(!new File(outDir).exists()){
 			    		new File(outDir).mkdirs();
-			    	}else{
-			    		continue;
 			    	}
 			    	for(int i = 0;i < files.length; i++){
 			    		String file_path = files[i].getAbsolutePath();
@@ -53,7 +51,7 @@ public class AttrSelect {
 				    	//String outArffPath = select_folder + file_name + "_" + eval.substring(0, 5) + "_"+search.substring(0, 5) + ".arff";
 				    	String outArffPath = outDir + file_name + ".arff";
 				    	if(new File(outArffPath).exists()){
-				    		//continue;
+				    		continue;
 				    	} 
 				    	Instances newIns = FileUtil.ReadData(file_path);
 					    //set the classIndex

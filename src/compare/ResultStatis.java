@@ -72,7 +72,7 @@ public class ResultStatis{
 			double time = 0;
 			Calendar calendar = Calendar.getInstance();		
 			
-			String out = resultFolder+"com_net_bow_selected1_result"+".xls";
+			String out = resultFolder + Config.data_folder.substring(Config.total_folder.length(),Config.data_folder.lastIndexOf("//")) + "_result"+".xls";
 			System.out.println("Output Path:" + out);
 			File output = new File(out);
 	    	String[] head = {"classifier","bag","accuracy","gmean","recall-0","recall-1","precision-0","precision-1","fMeasure-0","fMeasure-1","AUC","time"};	    	

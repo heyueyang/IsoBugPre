@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.LinkedList;
 
 import java_cup.internal_error;
 
@@ -70,12 +71,7 @@ public class DeleteAttr {
 	    		inputIns.deleteAttributeAt(38);
 	    		
 	    		inputIns.deleteAttributeAt(42);
-	    		inputIns.deleteAttributeAt(42);
-	    		
-	    		//inputIns.deleteAttributeAt(70);
-	    		//inputIns.deleteAttributeAt(70);
-	    		//inputIns.deleteAttributeAt(70);
-	    		
+	    		inputIns.deleteAttributeAt(42);		
 	    		
     		}catch(Exception e){
     			e.printStackTrace();
@@ -99,13 +95,16 @@ public class DeleteAttr {
 			BufferedWriter bw = new BufferedWriter(fw);
 			
 			BufferedReader bReader = new BufferedReader(new FileReader(path));
-			String line;
+			//write the head
+			String line = bReader.readLine();
+			if(line != null) bw.write(line + "\n");
+
 			while ((line = bReader.readLine()) != null) {
 				String[] temp = line.split(",");
 				int i = 0;
 				while(i < temp.length - 1){
 					if(temp[i].equals("")){
-						System.out.println(i + " ");
+						//System.out.println(i + " ");
 						bw.write("0" + ",");
 					}else{
 						bw.write(temp[i] + ",");
@@ -113,7 +112,7 @@ public class DeleteAttr {
 					i++;
 				}
 				bw.write(temp[i] + "\n");
-				//bw.write(line.replaceAll(",,", ",0,"));
+
 			}
 			bw.flush();
 			bw.close();
