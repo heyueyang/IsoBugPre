@@ -1,36 +1,13 @@
 package compare;
-import predict.ClassifyWithIsolation;
 import predict.Config;
 import predict.FileUtil;
-import predict.Result;
-import preprocess.LogPre;
 import preprocess.Sample;
-
 import java.io.File;
-import java.text.AttributedCharacterIterator.Attribute;
 import java.util.Calendar;
 import java.util.Random;
-
 import classify.base.OtherBagging;
 import classify.base.OtherEvaluation;
-
-import jxl.Sheet;
-import jxl.Workbook;
-import jxl.write.WritableSheet;
-import jxl.write.WritableWorkbook;
-
-
-import weka.attributeSelection.ASEvaluation;
-import weka.attributeSelection.ASSearch;
-import weka.attributeSelection.AttributeSelection;
-import weka.attributeSelection.Ranker;
-import weka.classifiers.Classifier;
-import weka.classifiers.Evaluation;
-import weka.classifiers.bayes.NaiveBayes;
-import weka.classifiers.meta.Bagging;
 import weka.core.Instances;
-import weka.core.converters.ArffLoader;
-import weka.core.converters.ArffSaver;
 
 public class ResultStatis{
 		static String[] c = {"weka.classifiers.bayes.NaiveBayes",
@@ -62,8 +39,6 @@ public class ResultStatis{
 		}
 		public static void run(String resultFolder, int sheet,String project) throws Exception{
 
-			String inputFile = null;
-			File input = null;
 			Instances data = null; 
 			int numIns = 0;
 			int numAttr = 0;
@@ -72,7 +47,8 @@ public class ResultStatis{
 			double time = 0;
 			Calendar calendar = Calendar.getInstance();		
 			
-			String out = resultFolder + Config.data_folder.substring(Config.total_folder.length(),Config.data_folder.lastIndexOf("//")) + "_result"+".xls";
+			String tempPath  = Config.data_folder.substring(Config.total_folder.length());
+			String out = resultFolder + tempPath.substring(0,tempPath.indexOf("//")) + "_result"+".xls";
 			System.out.println("Output Path:" + out);
 			File output = new File(out);
 	    	String[] head = {"classifier","bag","accuracy","gmean","recall-0","recall-1","precision-0","precision-1","fMeasure-0","fMeasure-1","AUC","time"};	    	

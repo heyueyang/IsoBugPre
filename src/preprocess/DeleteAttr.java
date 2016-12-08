@@ -1,16 +1,13 @@
 package preprocess;
 
 import java.io.BufferedReader;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.LinkedList;
-
-import java_cup.internal_error;
 
 import predict.Config;
 import predict.FileUtil;
@@ -21,14 +18,17 @@ public class DeleteAttr {
 	/**
 	 * @param args
 	 */
-	static String data_folder = "E:\\dataset\\change2.0\\com_net_csv\\";
-	static String replaced_folder = "E:\\dataset\\change2.0\\com_net_csv_replaced\\";
-	static String result_folder = "E:\\dataset\\change2.0\\com_net_arff\\";
+	static String data_folder = Config.total_folder + "com_net_other_csv\\";
+	static String replaced_folder = Config.total_folder + "com_net_other_replaced\\";
+	static String result_folder = Config.total_folder + "com_net_other_arff\\";
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
     	File f = new File(result_folder);
     	if(!f.exists()) f.mkdirs();
+    	
+    	File f1 = new File(replaced_folder);
+    	if(!f1.exists()) f1.mkdirs();
   
     	File ff = new File(data_folder);//select_folder
     	File[] files = ff.listFiles();
@@ -70,8 +70,8 @@ public class DeleteAttr {
 	    		//É¾³ýchangeloc
 	    		inputIns.deleteAttributeAt(38);
 	    		
-	    		inputIns.deleteAttributeAt(42);
-	    		inputIns.deleteAttributeAt(42);		
+	    		//inputIns.deleteAttributeAt(42);
+	    		//inputIns.deleteAttributeAt(42);		
 	    		
     		}catch(Exception e){
     			e.printStackTrace();

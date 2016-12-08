@@ -1,16 +1,12 @@
 package predict;
 
 import java.io.File;
-import java.io.IOException;
-import java.sql.Date;
-import java.util.Calendar;
 
 import weka.attributeSelection.ASEvaluation;
 import weka.attributeSelection.ASSearch;
 import weka.attributeSelection.AttributeSelection;
 import weka.attributeSelection.Ranker;
 import weka.core.Instances;
-import weka.core.converters.ArffSaver;
 
 /**
  * @author Heyueyang
@@ -20,8 +16,8 @@ public class AttrSelect {
 	static Instances ins;
 	static String Eval;
 	static String Search;
-	private static String data_folder = "E:/dataset/change2.0/com_net_before_bow_arff/";
-	private static String select_folder = "E:/dataset/change2.0/com_net_before_bow_arff_selected/";
+	private static String data_folder = "E:/dataset/change4.0/com_net_before_bow_arff/";
+	private static String select_folder = data_folder.substring(0,data_folder.lastIndexOf("/")) + "_selected/";//"E:/dataset/change2.0/com_net_arff_selected/";
 	
 	public static void main(String[] args) throws Exception {
 		// TODO Auto-generated method stub
@@ -29,11 +25,7 @@ public class AttrSelect {
 		String[] Sear = Config.SearchS;
     	File ff = new File(data_folder);//select_folder
     	File[] files = ff.listFiles();
-    	
-    		//File dir = new File(Config.select_folder + file_name); 
-    		//if(!dir.exists()){
-    		//	dir.mkdirs();
-    		//}
+
 	    	for(int s = 0; s < Eval.length; s++)
 	    	{
 	    		for(int p = 0; p < Sear.length; p++)
