@@ -1,13 +1,12 @@
 package predict;
 
 import java.io.File;
+import classify.base.*;
 
 import java.util.ArrayList;
 import java.util.Random;
 import classify.base.OtherEvaluation;
 
-import weka.classifiers.trees.IsolationForest;
-import weka.classifiers.trees.MyIsolationForest;
 import weka.core.Instances;
 
 public class ParaAnalyze {
@@ -68,9 +67,11 @@ public class ParaAnalyze {
 			
 			ClassifyWithIsolation classifier = new ClassifyWithIsolation(data0);
 			if(flag == 1){
-				thres = 0.0 + i*0.025;
-				//iso.setM_threshold(thres);
-				classifier.setThreshold(thres);
+				iso.setSubsampleSize(20);
+				thres = 0.3 + i*0.01;
+				//thres = 0.5;
+				iso.setAjust(thres);
+				//classifier.setThreshold(thres);
 			}else if(flag == 2){
 				thres = 0 + i*10;
 				iso.setNumTrees((int)thres);
@@ -79,18 +80,20 @@ public class ParaAnalyze {
 				iso.setSubsampleSize((int)(thres*ins.numInstances()));
 			}
 			
-		 	//OtherEvaluation eval = new OtherEvaluation(data0,0);
-			//eval.crossValidateModel(iso, data0, 10, new Random());
+		 	OtherEvaluation eval = new OtherEvaluation(data0,0);
+			eval.crossValidateModel(iso, data0, 10, new Random());
 
-			Result eval = classifier.crossValidateModel(iso,data0, 10);
+			//Result eval = classifier.crossValidateModel(iso,data0, 10);
+			
+			
 
 			    result[i][0] = "0";
 	            result[i][1] = String.valueOf(ins.numAttributes());
 	            result[i][2] = String.valueOf(iso.getSubsampleSize());
 	            result[i][3] = String.valueOf(iso.getNumTrees());
-	            result[i][4] = String.valueOf(thres);
+	            result[i][4] = String.valueOf(iso.getAjust());
 	            result[i][5] = String.valueOf(1 - eval.errorRate());
-	            result[i][6] = String.valueOf(eval.recall(0)*eval.recall(1));
+	            result[i][6] = String.valueOf(Math.sqrt(eval.recall(0)*eval.recall(1)));
 	            result[i][7] = String.valueOf(eval.recall(0));
 	            result[i][8] = String.valueOf(eval.recall(1));
 	            result[i][9] = String.valueOf(eval.precision(0));

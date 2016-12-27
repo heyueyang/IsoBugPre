@@ -1,10 +1,15 @@
 package compare;
 import predict.Config;
+import classify.base.*;
 import predict.FileUtil;
+import predict.Result;
 import preprocess.Sample;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Random;
+
+import classify.base.NewIsolationForest;
 import classify.base.OtherBagging;
 import classify.base.OtherEvaluation;
 import weka.core.Instances;
@@ -12,9 +17,10 @@ import weka.core.Instances;
 public class ResultStatis{
 		static String[] c = {"weka.classifiers.bayes.NaiveBayes",
 			"weka.classifiers.trees.J48",
-			"weka.classifiers.functions.SMO","weka.classifiers.trees.MyIsolationForest"};
+			"weka.classifiers.functions.SMO","classify.base.MyIsolationForest","classify.base.MyIsolationForest"};
+
 			//,"weka.classifiers.trees.MyIsolationForest"//"classify.base.NewIsolationForest"};
-		static String m_class = "change_prone";//"bug_introducingCopy";//"is_bug_intro";//
+		static String m_class = "change_prone";//"bug_introducingCopy";//"bug_introducing";//
 		
 		public static void main(String[] args) throws Exception {
 			long start_time = System.currentTimeMillis();
@@ -54,6 +60,7 @@ public class ResultStatis{
 	    	String[] head = {"classifier","bag","accuracy","gmean","recall-0","recall-1","precision-0","precision-1","fMeasure-0","fMeasure-1","AUC","time"};	    	
 			String[] methods = {"Simple","Bagging","Undersample","Oversample","UnderBag",	"OverBag", "SMOTE", "SMOTEBag"};//,"SMOTELog","OverLog","UnderLog"
 			int cnt = c.length;
+			
 			String[][] result = new String[(cnt)*methods.length][12];
 			double[] temp = new double[12];
 
@@ -75,16 +82,21 @@ public class ResultStatis{
 			Sample sam = new Sample(m_class);//data.classAttribute().name()
 			
 			for(int i = 0;i < cnt; i++){
+				int sampleCnt = methods.length;
 				System.out.println("Classifier:" + c[i]);
 				c1 = Class.forName(c[i]);
 				clas = (weka.classifiers.Classifier) Class.forName(c[i]).newInstance();
-				if(c[i].contains("IsolationForest")){
-					((weka.classifiers.trees.MyIsolationForest)clas).setSubsampleSize(20);
-					
-
+				if(c[i].contains("MyIsolationForest")){	
+					((MyIsolationForest)clas).setSubsampleSize(20);
+					if(i == 4){
+						sampleCnt = 1;
+						((MyIsolationForest)clas).setAjust(findThreshold((MyIsolationForest)clas, data));
+					}
+				}else if(c[i].contains("IsolationForest")){
+					((IsolationForest)clas).setSubsampleSize(20);
 				}
-				for(int j = 0;j < methods.length;j++){
-					//start = System.currentTimeMillis();
+				for(int j = 0;j < sampleCnt;j++){
+					start = System.currentTimeMillis();
 					
 					for(int t = 0;t < run_times; t++){
 						
@@ -273,7 +285,11 @@ public class ResultStatis{
 					time = (end-start);
 					//System.out.println(eval.toClassDetailsString());
 					result[m][0] = c[i];
-					result[m][1] = methods[j];
+					if(i==4){
+			        	result[m][1] = String.valueOf(((MyIsolationForest)clas).getAjust());
+			        }else{
+			        	result[m][1] = methods[j];
+			        }
 					result[m][2] = String.valueOf(temp[2]/run_times);
 			        result[m][3] = String.valueOf(temp[3]/run_times);
 			        result[m][4] = String.valueOf(temp[4]/run_times);//sampleRatio//
@@ -284,6 +300,7 @@ public class ResultStatis{
 			        result[m][9] = String.valueOf(temp[9]/run_times);
 			        result[m][10] = String.valueOf(temp[10]/run_times);	
 			        result[m][11] = String.valueOf(time/10) + "ms";
+			        
 			        m++;
 			        for(int p = 0 ; p < 12; p++) temp[p] = 0;
 					
@@ -295,7 +312,53 @@ public class ResultStatis{
 
 		}
 
-
+		public static double findThreshold(MyIsolationForest iso,Instances ins) throws Exception{
+		 	/*return 0.5;*/
+		 	
+	  	   	int cnt =21; 
+	  	   	String[][] result = new String[cnt][17];   	
+		    int numFolds = 10;
+		    double bestThres = 0.0;
+		    double thres = 0;
+		    double gmean = 0.0, balance = 0.0, buggy_presicion = 0.0, fmeasure = 0.0;
+		    Instances data = ins;    
+		    //data = new LogPre().run(data,0.5);
+		   	ArrayList<double[]> predict = new ArrayList<double[]>();
+		   	String path = Config.result_folder + Config.file +"/temp/";
+		   	File fold = new File(path);
+		    data.setClassIndex(data.numAttributes()-1);
+		   	if(! fold.exists()) fold.mkdirs();
+		   	String out_path = null;
+	  	
+		    if (data.classAttribute().isNominal()) {    
+		          data.stratify(numFolds);    
+		    } 
+		    int m_anomaly = FileUtil.anomalyIndex(data);        
+		    data.randomize(new Random());
+			for(int i = 0; i < cnt; i++){
+				thres = 0.4 + i*0.01;
+				iso.setAjust(thres);
+				iso.setSubsampleSize(20);
+			 	OtherEvaluation eval = new OtherEvaluation(data,0);
+				eval.crossValidateModel(iso, data, 10, new Random());
+				
+				 out_path = path + "findThres" + ".xls";
+				 double extra = eval.recall(0)*eval.recall(1)*eval.precision(0)*eval.precision(1);
+				 if(extra != 0 && eval.fMeasure(m_anomaly) > fmeasure){// tempRes.getGmean() > gmean,tempRes.getGmean() > gmean    tempRes.getPrecision()[anomaly] > buggy_presicion tempRes.getBalance()[anomaly] > balance
+					 gmean = Math.sqrt(eval.recall(0)*eval.recall(1));
+					 //balance = tempRes.getBalance()[anomaly];
+					 fmeasure = eval.fMeasure(m_anomaly);
+					 buggy_presicion = eval.precision(m_anomaly);
+					 bestThres = thres;
+					 System.out.print(fmeasure + "  ");
+					
+				 }
+			    			            			          	            
+		     }
+			FileUtil.outFile(out_path, result, Config.head);
+		    System.out.println("-------> bestThres : " + bestThres);
+			return bestThres;
+		}
 
 		
 	}

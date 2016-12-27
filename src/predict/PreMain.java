@@ -1,5 +1,6 @@
 package predict;
 import predict.Config;
+import classify.base.*;
 
 import predict.Result;
 
@@ -14,8 +15,6 @@ import java.util.Random;
 import compare.ResultStatis;
 
 
-import weka.classifiers.trees.IsolationForest;
-import weka.classifiers.trees.MyIsolationForest;
 import weka.core.Instances;
 import weka.core.converters.ArffLoader;
 import weka.core.converters.ArffSaver;
@@ -292,18 +291,20 @@ public class PreMain {
 			isoF.setSubsampleSize((int) (numIns*sampleRatio));
 				        	
 			double sum_thres = 0;
+			Random rand = new Random();
 			Instances data = newIns;
-			data.randomize(new Random());    
+			data.randomize(rand);    
 			if (data.classAttribute().isNominal()) {    
 				  data.stratify(numFolds);    
 			} 
 				     
 			for(int n = 0; n < numFolds; n++){
 				    //System.out.println("===Fold-"+n+"===");
-				    Instances train = data.trainCV(numFolds, n);  
+				    Instances train = data.trainCV(numFolds, n,rand);  
 				    Instances test = data.testCV(numFolds, n);
 				            	
-				    thres =  classifier.findThreshold(train,n);
+				    //thres =  classifier.findThreshold(train,n);
+				    thres = 0.5;
 				    sum_thres += thres;
 				    isoF.buildClassifier(train);
 				    predict1 = classifier.Classify(test,isoF, predict1, thres);				    			            	

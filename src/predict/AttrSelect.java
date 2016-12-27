@@ -16,7 +16,7 @@ public class AttrSelect {
 	static Instances ins;
 	static String Eval;
 	static String Search;
-	private static String data_folder = "E:/dataset/change4.0/com_net_before_bow_arff/";
+	private static String data_folder = "E:/dataset/change6.0/com_net_other_arff/";
 	private static String select_folder = data_folder.substring(0,data_folder.lastIndexOf("/")) + "_selected/";//"E:/dataset/change2.0/com_net_arff_selected/";
 	
 	public static void main(String[] args) throws Exception {
@@ -40,11 +40,11 @@ public class AttrSelect {
 			    		String file_path = files[i].getAbsolutePath();
 			    		System.out.println("=========File:" + file_path + "=======");
 			    		String file_name = file_path.substring(file_path.lastIndexOf("\\"), file_path.lastIndexOf("."));
-				    	//String outArffPath = select_folder + file_name + "_" + eval.substring(0, 5) + "_"+search.substring(0, 5) + ".arff";
 				    	String outArffPath = outDir + file_name + ".arff";
 				    	if(new File(outArffPath).exists()){
 				    		continue;
 				    	} 
+				    	
 				    	Instances newIns = FileUtil.ReadData(file_path);
 					    //set the classIndex
 					    System.out.println("======Attribute Selecting...======");

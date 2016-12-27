@@ -2,6 +2,7 @@ package preprocess;
 
 import java.io.BufferedReader;
 
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -18,9 +19,10 @@ public class DeleteAttr {
 	/**
 	 * @param args
 	 */
-	static String data_folder = Config.total_folder + "com_net_other_csv\\";
-	static String replaced_folder = Config.total_folder + "com_net_other_replaced\\";
-	static String result_folder = Config.total_folder + "com_net_other_arff\\";
+	static String data_dir = "com_net_other_csv\\";
+	static String data_folder = Config.total_folder + data_dir;
+	static String replaced_folder = Config.total_folder + data_dir.substring(0,data_dir.indexOf("csv"))+ "replaced\\";
+	static String result_folder = Config.total_folder + data_dir.substring(0,data_dir.indexOf("csv"))+ "arff\\";
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
@@ -35,23 +37,28 @@ public class DeleteAttr {
     	for(int i = 0;i < files.length; i++){
     		try{
     			String filePath = files[i].getAbsolutePath();
+    			String fileName = files[i].getName();
     			System.out.println("--->" + filePath);
-    			String replacedPath = ReplaceMissingValues(filePath);
-    			
+
+    			String replacedPath = replaced_folder + fileName.substring(0,fileName.lastIndexOf(".")) + ".csv";
+    			if(! new File(replacedPath).exists()){
+    				ReplaceMissingValues(filePath, replacedPath);
+    			}
     			System.out.println("====" + replacedPath);
-    			
-	    		Instances inputIns = FileUtil.ReadDataCSV(replacedPath);
-    			//Instances inputIns = FileUtil.ReadDataCSV(filePath);
-	    		inputIns = DeleteAttributes(inputIns);
+    			String path = result_folder + FileUtil.getFileName(files[i].getAbsolutePath()) + ".arff";	
+    			if(!new File(path).exists()){
+    				Instances inputIns = FileUtil.ReadDataCSV(replacedPath);
+    				//Instances inputIns = FileUtil.ReadDataCSV(filePath);
+	    			inputIns = DeleteAttributes(inputIns);
 	    		
-	    		//weka.filters.unsupervised.attribute.RemoveUseless remove = new weka.filters.unsupervised.attribute.RemoveUseless();
-				//remove.setMaximumVariancePercentageAllowed(0.99);				
-				//remove.setInputFormat(inputIns);
-				//inputIns = remove.useFilter(inputIns, remove);
-	    		//System.out.println("==Removed Attr:"+inputIns.numAttributes());
-	    		
-	    		String path = result_folder + FileUtil.getFileName(files[i].getAbsolutePath()) + ".arff";
-	    		FileUtil.WriteData(inputIns, path);
+		    		//weka.filters.unsupervised.attribute.RemoveUseless remove = new weka.filters.unsupervised.attribute.RemoveUseless();
+					//remove.setMaximumVariancePercentageAllowed(0.99);				
+					//remove.setInputFormat(inputIns);
+					//inputIns = remove.useFilter(inputIns, remove);
+		    		//System.out.println("==Removed Attr:"+inputIns.numAttributes());
+		    		
+		    		FileUtil.WriteData(inputIns, path);
+    			}
 	    		
     		}catch(Exception e){
     			e.printStackTrace();
@@ -70,8 +77,8 @@ public class DeleteAttr {
 	    		//É¾³ýchangeloc
 	    		inputIns.deleteAttributeAt(38);
 	    		
-	    		//inputIns.deleteAttributeAt(42);
-	    		//inputIns.deleteAttributeAt(42);		
+	    		inputIns.deleteAttributeAt(42);
+	    		inputIns.deleteAttributeAt(42);		
 	    		
     		}catch(Exception e){
     			e.printStackTrace();
@@ -80,9 +87,8 @@ public class DeleteAttr {
 
 	}
 	
-	private static String ReplaceMissingValues(String path) throws IOException{
+	private static String ReplaceMissingValues(String path, String result_path) throws IOException{
 		
-		String result_path = replaced_folder + path.substring(path.lastIndexOf("\\") + 1, path.lastIndexOf(".")) + ".csv";
 		System.out.println("====" + result_path);
 		try {
 			File file = new File(result_path);

@@ -1,6 +1,7 @@
 package predict;
 
 import predict.Result;
+import classify.base.*;
 
 
 import java.io.File;
@@ -9,8 +10,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-import weka.classifiers.trees.IsolationForest;
-import weka.classifiers.trees.MyIsolationForest;
 import weka.core.Instances;
 import weka.core.converters.ArffLoader;
 import weka.core.converters.ArffSaver;

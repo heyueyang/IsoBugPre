@@ -2,8 +2,8 @@ package classify.base;
 
 
 import weka.classifiers.RandomizableClassifier;
-import weka.classifiers.trees.IsolationForest;
-import weka.classifiers.trees.MyIsolationForest;
+
+import classify.base.*;
 
 
 import java.util.Enumeration;
@@ -85,6 +85,32 @@ public void setM_threshold(double m_threshold) {
     //scores[2] = avgPathLength;
     //System.out.println("======c(m_subsampleSize):"+c(m_subsampleSize));
     return scores;      
+  }
+
+  /**
+   * Builds the forest.
+   */
+  public void buildClassifier(Instances data) throws Exception {
+	  m_anomaly = anomalyIndex(data);
+	  //m_threshold = findThreshold(this,data);
+    // Can classifier handle the data?
+    getCapabilities().testWithFail(data);
+
+    // Reduce subsample size if data is too small
+    if (data.numInstances() < m_subsampleSize) {
+      m_subsampleSize = data.numInstances();
+    }
+
+    // Generate trees
+    m_trees = new Tree[m_numTrees];
+    data = new Instances(data);
+    Random r = (data.numInstances() > 0) ? 
+      data.getRandomNumberGenerator(m_Seed) : new Random(m_Seed);
+    for (int i = 0; i < m_numTrees; i++) {
+      data.randomize(r);
+      m_trees[i] = new Tree(new Instances(data, 0, m_subsampleSize), r,
+                            0, (int) Math.ceil(Utils.log2(data.numInstances())));
+    }
   }
 
   public double findThreshold(NewIsolationForest iso,Instances ins) throws Exception{

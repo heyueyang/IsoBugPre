@@ -8,6 +8,7 @@ import weka.core.Instances;
 import weka.core.converters.ArffLoader;
 import weka.core.converters.ArffSaver;
 import weka.core.converters.CSVLoader;
+import weka.core.converters.CSVSaver;
 
 import jxl.Workbook;
 import jxl.write.WritableSheet;
@@ -240,13 +241,34 @@ public class FileUtil {
 			System.out.println("======" + filePath + "already exist!======");
 			return false;
 		}
-
 		ArffSaver saver = new ArffSaver(); 
 	    saver.setInstances(ins);  
 	    try {
 			saver.setFile(new File(filePath));
 			saver.writeBatch(); 
 		    System.out.println("==Arff File Writed:"+filePath+"==");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}  
+	    
+	    return true;
+
+		
+}
+public static boolean WriteArff2CSV(Instances ins,String filePath){
+	    
+		if(new File(filePath).exists()){
+			System.out.println("======" + filePath + "already exist!======");
+			return false;
+		}
+		weka.core.converters.CSVSaver saver = new CSVSaver();
+	    saver.setInstances(ins);  
+	    try {
+			saver.setFile(new File(filePath));
+			saver.writeBatch(); 
+		    System.out.println("==CSV File Writed:"+filePath+"==");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
