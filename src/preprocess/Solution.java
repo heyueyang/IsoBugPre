@@ -23,8 +23,8 @@ public class Solution {
 
 	public static void fuck() throws IOException {
 		//1.读取文件夹下面的所有属性选择之后的文件
-		String total_dir = "E://dataset//change5.0//";
-		String selected_dir = "com_net_bow_arff_selected//CfsSu_BestF//";
+		String total_dir = "E://dataset//change6.0//";
+		String selected_dir = "com_net_other_bow_arff_selected//CfsSu_BestF//";
 		File fa=new File(total_dir + selected_dir);
 		File[] ch=fa.listFiles();
 		Set<String> attrbutes=new LinkedHashSet<>();//保存所有的属性名
@@ -56,7 +56,7 @@ public class Solution {
 			//去词典里查找词向量属性对应的单词
 			String arffName=file.getName().substring(0, file.getName().indexOf("."));
 			String textName=arffName + "Dic.csv";
-			File textFile=new File("E://dataset//change5.0//dic_csv//"+textName);
+			File textFile=new File("E://dataset//change6.0//dic_csv//"+textName);
 			br=new BufferedReader(new FileReader(textFile));
 			while ((line=br.readLine())!=null) {
 				String num=line.substring(0,line.indexOf("="));
@@ -101,7 +101,7 @@ public class Solution {
 		}
 		con.put("Frequency", freqBuilder);
 		//构造输出格式，输出至csv文件保存
-		File csvFile=new File("E://dataset//change5.0//select_analyze//"+ selected_dir.substring(0, selected_dir.indexOf("//")) + "_attr_selected.csv");
+		File csvFile=new File("E://dataset//change6.0//select_analyze//"+ selected_dir.substring(0, selected_dir.indexOf("//")) + "_attr_selected.csv");
 		if (!csvFile.exists()) {
 			csvFile.createNewFile();
 		}

@@ -339,11 +339,39 @@ public class MyIsolationForest extends RandomizableClassifier implements Technic
     double[] scores = new double[2];
     //scores[0] = Math.pow(2, - avgPathLength / c(m_subsampleSize));
     //scores[1] = 1.0 - scores[0];
-    scores[m_anomaly] = Math.pow(2, - avgPathLength / c(m_subsampleSize)) - (m_ajust - 0.5);
-    scores[1-m_anomaly] = 1.0 - scores[m_anomaly];
+    scores[m_anomaly] = Math.pow(2, - avgPathLength / c(m_subsampleSize));//- (m_ajust - 0.5);//
+    if(scores[m_anomaly] > m_ajust){
+    	scores[1-m_anomaly] = scores[m_anomaly]-0.01;
+    }else{
+    	scores[1-m_anomaly] = scores[m_anomaly]+0.01;
+    }
+    //scores[1-m_anomaly] = 1.0 - scores[m_anomaly];
     return scores;      
   }
+  
+  /*public double classifyInstance(Instance instance) throws Exception {
 
+	  	
+	    //double[] dist = distributionForInstance(instance);
+	    //if(dist[m_anomaly] > m_ajust) return m_anomaly;
+	    //else return (1-m_anomaly);
+	    
+	    double max = 0;
+	      int maxIndex = 0;
+
+	      for (int i = 0; i < dist.length; i++) {
+	        if (dist[i] > max) {
+	          maxIndex = i;
+	          max = dist[i];
+	        }
+	      }
+	      if (max > 0) {
+	        return maxIndex;
+	      } else {
+	        return Instance.missingValue();
+	      }
+	   
+  }*/
 
   /**
    * Main method for this class.

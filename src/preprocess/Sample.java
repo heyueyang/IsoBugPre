@@ -295,7 +295,7 @@ public class Sample{
 				Instances instances2, double ratio) {
 			int numSample = (int) Math.ceil(instances1.numInstances() * ratio); // 浼氫笉浼氱敱浜庡疄渚嬫暟杩囧鑰屽穿婧冿�?
 			int numNo = instances2.numInstances();
-			Random rn = new Random();
+			Random rn = new Random(1);
 			for (int i = 0; i < numSample; i++) {
 				instances1.add(instances2.instance(rn.nextInt(numNo)));
 			}
@@ -403,7 +403,7 @@ public class Sample{
 				attInfo.addElement(temp);
 			}
 			Instances res = new Instances("Res", attInfo, totalNum);
-			Random rn = new Random();
+			Random rn = new Random(1);
 			for (int i = 0; i <totalNum; i++) {
 					res.add(init.instance(rn.nextInt(numInstance)));
 			}

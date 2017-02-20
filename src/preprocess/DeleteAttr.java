@@ -19,7 +19,7 @@ public class DeleteAttr {
 	/**
 	 * @param args
 	 */
-	static String data_dir = "com_net_other_csv\\";
+	static String data_dir = "com_net_other_bow_csv\\";
 	static String data_folder = Config.total_folder + data_dir;
 	static String replaced_folder = Config.total_folder + data_dir.substring(0,data_dir.indexOf("csv"))+ "replaced\\";
 	static String result_folder = Config.total_folder + data_dir.substring(0,data_dir.indexOf("csv"))+ "arff\\";
@@ -51,11 +51,11 @@ public class DeleteAttr {
     				//Instances inputIns = FileUtil.ReadDataCSV(filePath);
 	    			inputIns = DeleteAttributes(inputIns);
 	    		
-		    		//weka.filters.unsupervised.attribute.RemoveUseless remove = new weka.filters.unsupervised.attribute.RemoveUseless();
-					//remove.setMaximumVariancePercentageAllowed(0.99);				
-					//remove.setInputFormat(inputIns);
-					//inputIns = remove.useFilter(inputIns, remove);
-		    		//System.out.println("==Removed Attr:"+inputIns.numAttributes());
+		    		weka.filters.unsupervised.attribute.RemoveUseless remove = new weka.filters.unsupervised.attribute.RemoveUseless();
+					remove.setMaximumVariancePercentageAllowed(0.99);				
+					remove.setInputFormat(inputIns);
+					inputIns = remove.useFilter(inputIns, remove);
+		    		System.out.println("==Removed Attr:"+inputIns.numAttributes());
 		    		
 		    		FileUtil.WriteData(inputIns, path);
     			}

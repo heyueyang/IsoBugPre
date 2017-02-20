@@ -1,6 +1,8 @@
 package predict;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -130,6 +132,30 @@ public class FileUtil {
 		wbook.close(); 		
 
 	}
+	
+	//结果二维数组写入xls文件
+		public static void outCSVFile(String path, String[][] res, String[] head) throws IOException, WriteException, WriteException{
+
+			File file = new File(path);
+			if (!file.exists()) {
+				 file.createNewFile();
+			}
+			BufferedWriter bw= new BufferedWriter(new FileWriter(file));
+
+			for(int j = 0; j < head.length-1; j++){
+				bw.append(head[j]+",");
+			}
+			bw.append(head[head.length-1] + "\n");
+			for(int i = 0; i < res.length; i++)
+			{
+				for(int j = 0; j < res[0].length-1; j++){
+					bw.append(res[i][j]+",");
+				}
+				bw.append(res[i][res[0].length-1] + "\n");
+			}
+			bw.close();
+			
+		}
 	
 	public static void exportFile(String[][] res,String file,String project, int sh, String[] head) throws Exception {  
 		try { 

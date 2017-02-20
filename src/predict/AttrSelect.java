@@ -16,7 +16,7 @@ public class AttrSelect {
 	static Instances ins;
 	static String Eval;
 	static String Search;
-	private static String data_folder = "E:/dataset/change6.0/com_net_other_arff/";
+	private static String data_folder = "E:/dataset/change6.0/com_bow_arff/";
 	private static String select_folder = data_folder.substring(0,data_folder.lastIndexOf("/")) + "_selected/";//"E:/dataset/change2.0/com_net_arff_selected/";
 	
 	public static void main(String[] args) throws Exception {

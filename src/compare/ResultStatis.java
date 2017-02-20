@@ -12,6 +12,7 @@ import java.util.Random;
 import classify.base.NewIsolationForest;
 import classify.base.OtherBagging;
 import classify.base.OtherEvaluation;
+import weka.classifiers.Evaluation;
 import weka.core.Instances;
 
 public class ResultStatis{
@@ -20,7 +21,7 @@ public class ResultStatis{
 			"weka.classifiers.functions.SMO","classify.base.MyIsolationForest","classify.base.MyIsolationForest"};
 
 			//,"weka.classifiers.trees.MyIsolationForest"//"classify.base.NewIsolationForest"};
-		static String m_class = "change_prone";//"bug_introducingCopy";//"bug_introducing";//
+		static String m_class = "bug_introducingCopy";//"change_prone";//"bug_introducing";//
 		
 		public static void main(String[] args) throws Exception {
 			long start_time = System.currentTimeMillis();
@@ -54,11 +55,11 @@ public class ResultStatis{
 			Calendar calendar = Calendar.getInstance();		
 			
 			String tempPath  = Config.data_folder.substring(Config.total_folder.length());
-			String out = resultFolder + tempPath.substring(0,tempPath.indexOf("//")) + "_result"+".xls";
+			String out = resultFolder + tempPath.substring(0,tempPath.indexOf("//")) + "_result1"+".xls";
 			System.out.println("Output Path:" + out);
 			File output = new File(out);
 	    	String[] head = {"classifier","bag","accuracy","gmean","recall-0","recall-1","precision-0","precision-1","fMeasure-0","fMeasure-1","AUC","time"};	    	
-			String[] methods = {"Simple","Bagging","Undersample","Oversample","UnderBag",	"OverBag", "SMOTE", "SMOTEBag"};//,"SMOTELog","OverLog","UnderLog"
+			String[] methods = {"Simple","Bagging","Undersample","UnderBag", "Oversample",	"OverBag", "SMOTE", "SMOTEBag"};//,"SMOTELog","OverLog","UnderLog"
 			int cnt = c.length;
 			
 			String[][] result = new String[(cnt)*methods.length][12];
@@ -81,7 +82,8 @@ public class ResultStatis{
 			data.setClassIndex(classIndex);
 			Sample sam = new Sample(m_class);//data.classAttribute().name()
 			
-			for(int i = 0;i < cnt; i++){
+			
+			for(int i = 0;i < cnt; i++){//方法个数
 				int sampleCnt = methods.length;
 				System.out.println("Classifier:" + c[i]);
 				c1 = Class.forName(c[i]);
@@ -95,12 +97,12 @@ public class ResultStatis{
 				}else if(c[i].contains("IsolationForest")){
 					((IsolationForest)clas).setSubsampleSize(20);
 				}
-				for(int j = 0;j < sampleCnt;j++){
+				for(int j = 0;j < sampleCnt;j++){//抽样个数
 					start = System.currentTimeMillis();
 					
 					for(int t = 0;t < run_times; t++){
-						
-						data.randomize(new Random());	
+						Random rand = new Random(t);
+						data.randomize(rand);	
 						switch(j){
 							case 0:{
 								//start = System.currentTimeMillis();
@@ -111,7 +113,7 @@ public class ResultStatis{
 								 */
 								
 								eval = new OtherEvaluation(data,0);
-								eval.crossValidateModel(clas, data, 10, new Random());
+								eval.crossValidateModel(clas, data, 10, rand);
 								
 								//end = System.currentTimeMillis();
 								//time = (end-start);
@@ -131,7 +133,7 @@ public class ResultStatis{
 								c2.setClassifier((weka.classifiers.Classifier) clas);
 								//c2.setBagSizePercent(50);
 								eval = new OtherEvaluation(data,0);
-								eval.crossValidateModel(c2, data, 10, new Random());
+								eval.crossValidateModel(c2, data, 10, rand);
 								//System.out.println(eval.toClassDetailsString());
 								//System.out.println(c2.toString());
 								//end = System.currentTimeMillis();
@@ -160,7 +162,7 @@ public class ResultStatis{
 								}else{
 									eval = new OtherEvaluation(data,3);
 								}
-								eval.crossValidateModel(clas, data, 10, new Random());
+								eval.crossValidateModel(clas, data, 10, rand);
 								break;
 							}
 							case 3:{
@@ -176,13 +178,17 @@ public class ResultStatis{
 						
 								eval = new Evaluation(ins);
 								eval.crossValidateModel(clas, ins, 10, new Random());*/
-
+								OtherBagging c2 = null;
 								if(i!=3){
-									eval = new OtherEvaluation(data,2);
+									c2 = new OtherBagging(clas, data,m_class,1);
 								}else{
-									eval = new OtherEvaluation(data,4);
+									c2 = new OtherBagging(clas, data,m_class,3);
 								}
-								eval.crossValidateModel(clas, data, 10, new Random());
+								c2.setClassifier((weka.classifiers.Classifier) clas);
+								eval = new OtherEvaluation(data,0);
+								eval.crossValidateModel(c2, data, 10, rand);
+								
+								
 								//end = System.currentTimeMillis();
 								//time = (end-start);
 								break;
@@ -205,15 +211,12 @@ public class ResultStatis{
 								eval = new Evaluation(ins);
 								eval.crossValidateModel(c2, ins, 10, new Random());*/
 
-								OtherBagging c2 = null;
 								if(i!=3){
-									c2 = new OtherBagging(clas, data,m_class,1);
+									eval = new OtherEvaluation(data,2);
 								}else{
-									c2 = new OtherBagging(clas, data,m_class,3);
+									eval = new OtherEvaluation(data,4);
 								}
-								c2.setClassifier((weka.classifiers.Classifier) clas);
-								eval = new OtherEvaluation(data,0);
-								eval.crossValidateModel(c2, data, 10, new Random());
+								eval.crossValidateModel(clas, data, 10, rand);
 								//end = System.currentTimeMillis();
 								//time = (end-start);
 								break;
@@ -245,21 +248,21 @@ public class ResultStatis{
 								}
 								c2.setClassifier((weka.classifiers.Classifier) clas);
 								eval = new OtherEvaluation(data,0);
-								eval.crossValidateModel(c2, data, 10, new Random());
+								eval.crossValidateModel(c2, data, 10, rand);
 								//end = System.currentTimeMillis();
 								//time = (end-start);
 								break;
 							}
 							case 6:{
 								eval = new OtherEvaluation(data,5);
-								eval.crossValidateModel(clas, data, 10, new Random());
+								eval.crossValidateModel(clas, data, 10, rand);
 								break;
 							}
 							case 7:{
 								OtherBagging c2 = new OtherBagging(clas, data,m_class,5);
 								c2.setClassifier((weka.classifiers.Classifier) clas);
 								eval = new OtherEvaluation(data,0);
-								eval.crossValidateModel(c2, data, 10, new Random());
+								eval.crossValidateModel(c2, data, 10, rand);
 								break;
 							}
 						
@@ -339,7 +342,8 @@ public class ResultStatis{
 				thres = 0.4 + i*0.01;
 				iso.setAjust(thres);
 				iso.setSubsampleSize(20);
-			 	OtherEvaluation eval = new OtherEvaluation(data,0);
+			 	//OtherEvaluation eval = new OtherEvaluation(data,0);
+			 	Evaluation eval = new Evaluation(data);
 				eval.crossValidateModel(iso, data, 10, new Random());
 				
 				 out_path = path + "findThres" + ".xls";
