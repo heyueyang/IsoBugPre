@@ -17,6 +17,7 @@ import weka.classifiers.Evaluation;
 import weka.classifiers.trees.J48;
 import weka.core.Instances;
 import weka.core.converters.ArffLoader;
+import weka.core.converters.ArffSaver;
 
 public class ClassifyMain {
 
@@ -24,8 +25,8 @@ public class ClassifyMain {
 	 * @param args
 	 * @throws Exception 
 	 */
-	private static String data_folder = "E://dataset//change7.0//com_arff//";
-	private static String selected_folder = "";
+	private static String data_folder = "E://dataset//change7.0//com_bow_arff//";
+	private static String selected_folder = "E://dataset//change7.0//com_bow_arff_selected//CfsSu_BestF//";
 	private static String result_folder = "E://dataset//result//";
 	public static void main(String[] args) throws Exception {
 		// TODO Auto-generated method stub
@@ -43,25 +44,36 @@ public class ClassifyMain {
     	resultList.add("Project,Method,Acc,Gmean,Recall-0,Precision-0,fMeasure-0,Recall-1,Precision-1,fMeasure-1,AUC" + "\n");
 	    for(int i = 0;i < files.length; i++){
 			Instances originIns = ReadData(files[i].getAbsolutePath());
+			originIns.setClassIndex(originIns.numAttributes()-1);
 			System.out.println(files[i].getAbsolutePath());
 			System.out.println(originIns.numInstances());
-			Instances selectedIns = Select(originIns);
+			
+			String selected_path = selected_folder + files[i].getName();
+			File selected_file = new File(selected_path);
+			Instances selectedIns = null;
+			if(!selected_file.exists()){
+				selectedIns = Select(originIns);
+				WriteData(selectedIns, selected_path);
+			}else{
+				selectedIns = ReadData(selected_path);
+			}
+			selectedIns.setClassIndex(selectedIns.numAttributes()-1);
 			
 			
-			J48 classifier1= new J48();
-			classifier1.buildClassifier(originIns);
-			J48 classifier2= new J48();
-			classifier2.buildClassifier(selectedIns);
+			
 			
 			
 			Random rand = new Random(1);
+			
 			Evaluation eval1 = new Evaluation(originIns);
-			eval1.crossValidateModel(classifier1, originIns, 10, rand);
+			eval1.crossValidateModel(new J48(), originIns, 10, rand);
+			
 			Evaluation eval2 = new Evaluation(selectedIns);
-			eval2.crossValidateModel(classifier1, originIns, 10, rand);
+			eval2.crossValidateModel(new J48(), selectedIns, 10, rand);
+			
 			//generate the output string of origin
 			StringBuilder sBuilder1 = new StringBuilder();
-			sBuilder1.append(files[i].getName()+",");
+			sBuilder1.append(files[i].getAbsolutePath()+",");
 			sBuilder1.append("Origin" + ",");
 			sBuilder1.append(1-eval1.errorRate()+ ",");
 			sBuilder1.append(Math.sqrt(eval1.recall(0)*eval1.recall(1)) + ",");
@@ -75,7 +87,7 @@ public class ClassifyMain {
 			resultList.add(sBuilder1.toString());
 			//generate the output string of origin
 			StringBuilder sBuilder2 = new StringBuilder();
-			sBuilder2.append(files[i].getName()+",");
+			sBuilder2.append(selected_file.getAbsolutePath()+",");
 			sBuilder2.append("Selected" + ",");
 			sBuilder2.append(1-eval2.errorRate()+ ",");
 			sBuilder2.append(Math.sqrt(eval2.recall(0)*eval2.recall(1)) + ",");
@@ -199,5 +211,26 @@ public class ClassifyMain {
         
         return isSucess;
     }
-
+    
+public static boolean WriteData(Instances ins,String filePath){
+	    
+		if(new File(filePath).exists()){
+			System.out.println("======" + filePath + "already exist!======");
+			return false;
+		}
+		ArffSaver saver = new ArffSaver(); 
+	    saver.setInstances(ins);  
+	    try {
+			saver.setFile(new File(filePath));
+			saver.writeBatch(); 
+		    System.out.println("==Arff File Writed:"+filePath+"==");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}  
+	    
+	    return true;
+		
+	}
 }

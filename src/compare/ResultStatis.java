@@ -21,7 +21,7 @@ public class ResultStatis{
 			"weka.classifiers.functions.SMO","classify.base.MyIsolationForest","classify.base.MyIsolationForest"};
 
 			//,"weka.classifiers.trees.MyIsolationForest"//"classify.base.NewIsolationForest"};
-		static String m_class = "bug_introducingCopy";//"change_prone";//"bug_introducing";//
+		static String m_class = "change_prone";//"bug_introducing";//"bug_introducingCopy";//
 		
 		public static void main(String[] args) throws Exception {
 			long start_time = System.currentTimeMillis();
@@ -55,7 +55,7 @@ public class ResultStatis{
 			Calendar calendar = Calendar.getInstance();		
 			
 			String tempPath  = Config.data_folder.substring(Config.total_folder.length());
-			String out = resultFolder + tempPath.substring(0,tempPath.indexOf("//")) + "_result1"+".xls";
+			String out = resultFolder + tempPath.substring(0,tempPath.indexOf("//")) + "_result_test"+".xls";
 			System.out.println("Output Path:" + out);
 			File output = new File(out);
 	    	String[] head = {"classifier","bag","accuracy","gmean","recall-0","recall-1","precision-0","precision-1","fMeasure-0","fMeasure-1","AUC","time"};	    	

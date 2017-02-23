@@ -14,7 +14,7 @@ import weka.filters.Filter;
 import weka.filters.supervised.instance.SMOTE;
 
 public class Sample{
-	 private static String className = "bug_introducingCopy";//"change_prone";
+	 private static String className = "change_prone";//"bug_introducingCopy";//
 	 public Sample(String claName){
 		 className = claName;
 	 }
@@ -408,6 +408,7 @@ public class Sample{
 					res.add(init.instance(rn.nextInt(numInstance)));
 			}
 			res.setClass(res.attribute(className));
+			//res.setClassIndex(res.numAttributes()-1);
 			return res;
 		}
 	

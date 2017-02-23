@@ -2,11 +2,11 @@ package predict;
 
 public class Config{
 	
-	public static String total_folder = "E://dataset//binbin//";//"E://dataset//change7.0//";//
+	public static String total_folder = "E://dataset//change7.0//";//"E://dataset//binbin//";//
 	public static String result_folder = total_folder + "compare_result//";
 	//private static String data_folder = "E://dadaset//nasa-data//data//";
 	//public static String data_folder = "E://dadaset//change//arff//";
-	public static String data_folder = total_folder + "myselect//";//"com_arff//";//net_other_arff_selected//CfsSu_BestF////"com_net_arff_selected//CfsSu_BestF//"
+	public static String data_folder = total_folder + "com_bow_arff_selected//CfsSu_BestF//";//"myselect//";//"com_arff//";
 	public static String select_folder = total_folder + "selected/";
 	public static String sample_folder = total_folder + "sample/";
 	//public static String data_folder = "E://dataset//binbin//binbin//";
