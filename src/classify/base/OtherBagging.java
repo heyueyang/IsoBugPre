@@ -186,10 +186,8 @@ public class OtherBagging extends RandomizableIteratedSingleClassifierEnhancer
     m_Classifier = new weka.classifiers.trees.REPTree();
   }
 
-  public OtherBagging(Classifier classifier, Instances ins, String className,
-			int judge) throws Exception {
-		super();
-		super.setClassifier(classifier);
+  public OtherBagging(Classifier classifier, String className, int judge) throws Exception {
+	    m_Classifier = new weka.classifiers.trees.REPTree();
 		this.className = className;
 		this.choose = judge;
 
@@ -542,9 +540,15 @@ public class OtherBagging extends RandomizableIteratedSingleClassifierEnhancer
         }*/
     	  
     	  data.randomize(random);
-			switch(choose){
+		  switch(choose){
 				case 0:{
-					bagData=sample.RandomSample(data, 1);
+					//bagData=sample.RandomSample(data, 1);
+					bagData = data.resampleWithWeights(random);
+			        if (bagSize < data.numInstances()) {
+			          bagData.randomize(random);
+			          Instances newBagData = new Instances(bagData, 0, bagSize);
+			          bagData = newBagData;
+			        }
 					break;
 				}
 				case 1:{

@@ -28,6 +28,7 @@ public class TestRandom {
 		for(int i = 0 ; i < l1.length; i++){
 			l2[i] = rand2.nextInt(100);
 		}
+	
 
 		assertArrayEquals(l1, l2);
 	}

@@ -13,6 +13,7 @@ import classify.base.NewIsolationForest;
 import classify.base.OtherBagging;
 import classify.base.OtherEvaluation;
 import weka.classifiers.Evaluation;
+import weka.classifiers.meta.Bagging;
 import weka.core.Instances;
 
 public class ResultStatis{
@@ -47,12 +48,10 @@ public class ResultStatis{
 		public static void run(String resultFolder, int sheet,String project) throws Exception{
 
 			Instances data = null; 
-			int numIns = 0;
-			int numAttr = 0;
 			long start = 0;
 			long end = 0;
 			double time = 0;
-			Calendar calendar = Calendar.getInstance();		
+			//Calendar calendar = Calendar.getInstance();		
 			
 			String tempPath  = Config.data_folder.substring(Config.total_folder.length());
 			String out = resultFolder + tempPath.substring(0,tempPath.indexOf("//")) + "_result_test"+".xls";
@@ -66,27 +65,24 @@ public class ResultStatis{
 			double[] temp = new double[12];
 
 			OtherEvaluation eval = null;
-			Class<?> c1 = null;
 			weka.classifiers.Classifier clas = null;
+			
 			int m =0;
 			int classIndex = 0;
-			double run_times = 10;
+			double run_times = 5;
 			
 			//inputFile = Config.select_folder + project;
 			System.out.println(project);
 			data = FileUtil.ReadData(project);
-			numIns = data.numInstances();
-			numAttr = data.numAttributes();
 			
-			classIndex = numAttr-1;
+			classIndex = data.numAttributes()-1;
 			data.setClassIndex(classIndex);
-			Sample sam = new Sample(m_class);//data.classAttribute().name()
 			
 			
 			for(int i = 0;i < cnt; i++){//方法个数
 				int sampleCnt = methods.length;
 				System.out.println("Classifier:" + c[i]);
-				c1 = Class.forName(c[i]);
+				
 				clas = (weka.classifiers.Classifier) Class.forName(c[i]).newInstance();
 				if(c[i].contains("MyIsolationForest")){	
 					((MyIsolationForest)clas).setSubsampleSize(20);
@@ -105,57 +101,31 @@ public class ResultStatis{
 						data.randomize(rand);	
 						switch(j){
 							case 0:{
-								//start = System.currentTimeMillis();
-								
-								/*
-								eval = new Evaluation(data);
-								eval.crossValidateModel(clas, data, 10, new Random());
-								 */
 								
 								eval = new OtherEvaluation(data,0);
 								eval.crossValidateModel(clas, data, 10, rand);
-								
-								//end = System.currentTimeMillis();
-								//time = (end-start);
+
 								break;
 							
 							}
 							case 1:{
-								//start = System.currentTimeMillis();
-								/*
-								Bagging c2 = new Bagging();
-								c2.setClassifier((weka.classifiers.Classifier) clas);
-								c2.setBagSizePercent(50);
-								eval = new Evaluation(data);
-								eval.crossValidateModel(c2, data, 10, new Random());
-								*/
-								OtherBagging c2 = new OtherBagging(clas, data, m_class, 0);
-								c2.setClassifier((weka.classifiers.Classifier) clas);
+
+								OtherBagging c2 = new OtherBagging(clas, m_class, 0);
+								c2.setClassifier(clas);
 								//c2.setBagSizePercent(50);
+								//Bagging c2 = new Bagging();
+								//c2.setClassifier(clas);
 								eval = new OtherEvaluation(data,0);
 								eval.crossValidateModel(c2, data, 10, rand);
-								//System.out.println(eval.toClassDetailsString());
-								//System.out.println(c2.toString());
-								//end = System.currentTimeMillis();
-								//time = (end-start);
+								
+								/*Bagging c2 = new Bagging();
+								c2.setClassifier(clas);
+								eval = new Evaluation(data);
+								eval.crossValidateModel(c2, data, 10, rand);*/
+								
 								break;
 							}
 							case 2:{
-								//start = System.currentTimeMillis();
-								//inputFile = Config.select_folder + project.substring(0,project.lastIndexOf(".")) + "_" + "undersample.arff";
-								//System.out.println(inputFile);
-								/*
-								Instances ins = null;
-								if(c[i] == "weka.classifiers.trees.IsolationForest"){
-									ins = sam.AntiUnderSample(data, 0.05);
-								}else{
-									ins = sam.UnderSample(data);
-								}
-								
-								ins.randomize(new Random());
-								eval = new Evaluation(ins);
-								eval.crossValidateModel(clas, ins, 10, new Random());
-								*/
 
 								if(i!=3){
 									eval = new OtherEvaluation(data,1);
@@ -166,50 +136,20 @@ public class ResultStatis{
 								break;
 							}
 							case 3:{
-								//start = System.currentTimeMillis();
-								//inputFile = Config.select_folder + project.substring(0,project.lastIndexOf(".")) + "_" + "oversample.arff";
-								/*Instances ins = null;
-								if(c[i] == "weka.classifiers.trees.IsolationForest"){
-									ins = sam.AntiOverSample(data, 0.05);
-								}else{
-									ins = sam.OverSample(data);
-								}
-								ins.randomize(new Random());
-						
-								eval = new Evaluation(ins);
-								eval.crossValidateModel(clas, ins, 10, new Random());*/
+
 								OtherBagging c2 = null;
 								if(i!=3){
-									c2 = new OtherBagging(clas, data,m_class,1);
+									c2 = new OtherBagging(clas,m_class,1);
 								}else{
-									c2 = new OtherBagging(clas, data,m_class,3);
+									c2 = new OtherBagging(clas, m_class,3);
 								}
 								c2.setClassifier((weka.classifiers.Classifier) clas);
 								eval = new OtherEvaluation(data,0);
 								eval.crossValidateModel(c2, data, 10, rand);
-								
-								
-								//end = System.currentTimeMillis();
-								//time = (end-start);
+
 								break;
 							}
 							case 4:{
-								//start = System.currentTimeMillis();
-								//inputFile = Config.select_folder + project.substring(0,project.lastIndexOf(".")) + "_" + "undersample.arff";
-								/*Instances ins = null;
-								if(c[i] == "weka.classifiers.trees.IsolationForest"){
-									ins = sam.AntiUnderSample(data, 0.05);
-								}else{
-									ins = sam.UnderSample(data);
-								}
-								ins.randomize(new Random());
-								
-								Bagging c2 = new weka.classifiers.meta.Bagging();
-								c2.setClassifier((weka.classifiers.Classifier) clas);
-								c2.setBagSizePercent(50);
-								
-								eval = new Evaluation(ins);
-								eval.crossValidateModel(c2, ins, 10, new Random());*/
 
 								if(i!=3){
 									eval = new OtherEvaluation(data,2);
@@ -217,40 +157,21 @@ public class ResultStatis{
 									eval = new OtherEvaluation(data,4);
 								}
 								eval.crossValidateModel(clas, data, 10, rand);
-								//end = System.currentTimeMillis();
-								//time = (end-start);
+
 								break;
 							}
 							case 5:{
-								//start = System.currentTimeMillis();
-								//inputFile = Config.select_folder + project.substring(0,project.lastIndexOf(".")) + "_" + "oversample.arff";
-								/*Instances ins = null;
-								if(c[i] == "weka.classifiers.trees.IsolationForest"){
-									ins = sam.AntiOverSample(data, 0.05);
-								}else{
-									ins = sam.OverSample(data);
-								}
-								ins.randomize(new Random());
-								
-								Bagging c2 = new Bagging();
-								c2.setClassifier((weka.classifiers.Classifier) Class.forName(c[i]).newInstance());
-								c2.setBagSizePercent(50);
-								
-								eval = new Evaluation(ins);
-								eval.crossValidateModel(c2, ins, 10, new Random());
-								*/
 
 								OtherBagging c2 = null;
 								if(i!=3){
-									c2 = new OtherBagging(clas, data,m_class,2);
+									c2 = new OtherBagging(clas, m_class,2);
 								}else{
-									c2 = new OtherBagging(clas, data,m_class,4);
+									c2 = new OtherBagging(clas, m_class,4);
 								}
 								c2.setClassifier((weka.classifiers.Classifier) clas);
 								eval = new OtherEvaluation(data,0);
 								eval.crossValidateModel(c2, data, 10, rand);
-								//end = System.currentTimeMillis();
-								//time = (end-start);
+
 								break;
 							}
 							case 6:{
@@ -259,7 +180,7 @@ public class ResultStatis{
 								break;
 							}
 							case 7:{
-								OtherBagging c2 = new OtherBagging(clas, data,m_class,5);
+								OtherBagging c2 = new OtherBagging(clas, m_class,5);
 								c2.setClassifier((weka.classifiers.Classifier) clas);
 								eval = new OtherEvaluation(data,0);
 								eval.crossValidateModel(c2, data, 10, rand);
@@ -274,7 +195,7 @@ public class ResultStatis{
 						temp[1] = 0;
 						temp[2] += 1-eval.errorRate();
 				        temp[3] += Math.sqrt(eval.recall(0)*eval.recall(1));
-				        temp[4] += eval.recall(0);//sampleRatio//
+				        temp[4] += eval.recall(0);
 				        temp[5] += eval.recall(1);
 				        temp[6] += eval.precision(0);
 				        temp[7] += eval.precision(1);
@@ -295,7 +216,7 @@ public class ResultStatis{
 			        }
 					result[m][2] = String.valueOf(temp[2]/run_times);
 			        result[m][3] = String.valueOf(temp[3]/run_times);
-			        result[m][4] = String.valueOf(temp[4]/run_times);//sampleRatio//
+			        result[m][4] = String.valueOf(temp[4]/run_times);
 			        result[m][5] = String.valueOf(temp[5]/run_times);
 			        result[m][6] = String.valueOf(temp[6]/run_times);
 			        result[m][7] = String.valueOf(temp[7]/run_times);
@@ -308,11 +229,8 @@ public class ResultStatis{
 			        for(int p = 0 ; p < 12; p++) temp[p] = 0;
 					
 				}
-				
-	
 			}
 		    FileUtil.exportFile(result, out, project, sheet, head);
-
 		}
 
 		public static double findThreshold(MyIsolationForest iso,Instances ins) throws Exception{

@@ -7,12 +7,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import classify.base.OtherBagging;
+import classify.base.OtherEvaluation;
+
 import predict.AttrSelect;
 import predict.Config;
 import predict.FileUtil;
 import weka.attributeSelection.ASEvaluation;
 import weka.attributeSelection.ASSearch;
 import weka.attributeSelection.AttributeSelection;
+import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.trees.J48;
 import weka.core.Instances;
@@ -25,8 +29,8 @@ public class ClassifyMain {
 	 * @param args
 	 * @throws Exception 
 	 */
-	private static String data_folder = "E://dataset//change7.0//com_bow_arff//";
-	private static String selected_folder = "E://dataset//change7.0//com_bow_arff_selected//CfsSu_BestF//";
+	private static String data_folder = "E://dataset//change3.0//com_net_arff//";
+	private static String selected_folder = "E://dataset//change3.0//com_bow_arff_selected//CfsSu_BestF//";
 	private static String result_folder = "E://dataset//result//";
 	public static void main(String[] args) throws Exception {
 		// TODO Auto-generated method stub
@@ -48,7 +52,7 @@ public class ClassifyMain {
 			System.out.println(files[i].getAbsolutePath());
 			System.out.println(originIns.numInstances());
 			
-			String selected_path = selected_folder + files[i].getName();
+			/*String selected_path = selected_folder + files[i].getName();
 			File selected_file = new File(selected_path);
 			Instances selectedIns = null;
 			if(!selected_file.exists()){
@@ -57,7 +61,7 @@ public class ClassifyMain {
 			}else{
 				selectedIns = ReadData(selected_path);
 			}
-			selectedIns.setClassIndex(selectedIns.numAttributes()-1);
+			selectedIns.setClassIndex(selectedIns.numAttributes()-1);*/
 			
 			
 			
@@ -65,12 +69,33 @@ public class ClassifyMain {
 			
 			Random rand = new Random(1);
 			
-			Evaluation eval1 = new Evaluation(originIns);
-			eval1.crossValidateModel(new J48(), originIns, 10, rand);
+			/*Evaluation eval = new Evaluation(originIns);
+			eval.crossValidateModel(new J48(), originIns, 10, rand);
+			double Acc = 1 - eval.errorRate();
+			double AUC = eval.areaUnderROC(0);
+			double Precision_0 = eval.precision(0);
+			double Precision_1 = eval.precision(1);
+			double Recall_0 = eval.recall(0);
+			double Recall_1 = eval.recall(1);
+			double fMeasure_0 = eval.fMeasure(0);
+			double fMeasure_1 = eval.fMeasure(1);
+			double Gmean = Math.sqrt(eval.recall(0)*eval.recall(1));*/
 			
-			Evaluation eval2 = new Evaluation(selectedIns);
-			eval2.crossValidateModel(new J48(), selectedIns, 10, rand);
 			
+			//Evaluation eval1 = new Evaluation(originIns);
+			//eval1.crossValidateModel(new J48(), originIns, 10, rand);
+			
+			//Evaluation eval2 = new Evaluation(selectedIns);
+			//eval2.crossValidateModel(new J48(), selectedIns, 10, rand);
+			
+			
+			Classifier clas = new J48();
+			OtherBagging c2 = new OtherBagging(clas, "change_prone", 0);
+			c2.setClassifier(clas);
+
+			OtherEvaluation  eval1 = new OtherEvaluation(originIns,0);
+			eval1.crossValidateModel(c2, originIns, 10, rand);
+
 			//generate the output string of origin
 			StringBuilder sBuilder1 = new StringBuilder();
 			sBuilder1.append(files[i].getAbsolutePath()+",");
@@ -86,7 +111,7 @@ public class ClassifyMain {
 			sBuilder1.append(eval1.areaUnderROC(0));
 			resultList.add(sBuilder1.toString());
 			//generate the output string of origin
-			StringBuilder sBuilder2 = new StringBuilder();
+			/*StringBuilder sBuilder2 = new StringBuilder();
 			sBuilder2.append(selected_file.getAbsolutePath()+",");
 			sBuilder2.append("Selected" + ",");
 			sBuilder2.append(1-eval2.errorRate()+ ",");
@@ -98,7 +123,7 @@ public class ClassifyMain {
 			sBuilder2.append(eval2.precision(1)+ ",");
 			sBuilder2.append(eval2.fMeasure(1)+ ",");
 			sBuilder2.append(eval2.areaUnderROC(0));
-			resultList.add(sBuilder2.toString());
+			resultList.add(sBuilder2.toString());*/
 	    }
 		
 		exportCsv(new File(result_folder + "result.csv"), resultList);

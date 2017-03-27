@@ -29,7 +29,7 @@ public class Test {
 
 	           //∂¡»Î—µ¡∑≤‚ ‘—˘±æ
 
-	           File file = new File("E://dataset//change7.0//com_arff//ant.arff");
+	           File file = new File("E://dataset//change3.0//com_net_arff//ant.arff");
 
 	           ArffLoader loader = new ArffLoader();
 

@@ -19,7 +19,7 @@ public class DeleteAttr {
 	/**
 	 * @param args
 	 */
-	static String data_dir = "com_net_other_bow_csv\\";
+	static String data_dir = "com_net_other_csv\\";
 	static String data_folder = Config.total_folder + data_dir;
 	static String replaced_folder = Config.total_folder + data_dir.substring(0,data_dir.indexOf("csv"))+ "replaced\\";
 	static String result_folder = Config.total_folder + data_dir.substring(0,data_dir.indexOf("csv"))+ "arff\\";
@@ -45,7 +45,7 @@ public class DeleteAttr {
     				ReplaceMissingValues(filePath, replacedPath);
     			}
     			System.out.println("====" + replacedPath);
-    			String path = result_folder + FileUtil.getFileName(files[i].getAbsolutePath()) + ".arff";	
+    			String path = result_folder + fileName.substring(0,fileName.lastIndexOf(".")) + ".arff";	
     			if(!new File(path).exists()){
     				Instances inputIns = FileUtil.ReadDataCSV(replacedPath);
     				//Instances inputIns = FileUtil.ReadDataCSV(filePath);
