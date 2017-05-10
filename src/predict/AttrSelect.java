@@ -16,7 +16,7 @@ public class AttrSelect {
 	static Instances ins;
 	static String Eval;
 	static String Search;
-	private static String data_folder = "E:/dataset/change6.0/com_bow_arff/";
+	private static String data_folder = "E:/dataset/change6.0/com_net_bow_arff/";
 	private static String select_folder = data_folder.substring(0,data_folder.lastIndexOf("/")) + "_selected/";//"E:/dataset/change2.0/com_net_arff_selected/";
 	
 	public static void main(String[] args) throws Exception {
@@ -101,12 +101,10 @@ public class AttrSelect {
 		
 		        attrs1.setEvaluator(eval);
 				attrs1.setSearch(rank);
-				System.out.println("1");
 				attrs1.SelectAttributes(ins);
-				System.out.println("2");
 				tempIns = attrs1.reduceDimensionality(ins);
-				System.out.println("Evaluation:" + c1.getName());
-				System.out.println("Search:" + c2.getName());
+				//System.out.println("Evaluation:" + c1.getName());
+				//System.out.println("Search:" + c2.getName());
 			}catch(Exception e){
 				System.out.println("Attribute Selection Error::"+e.toString());
 				throw new Exception();
