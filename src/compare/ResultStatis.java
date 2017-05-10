@@ -19,9 +19,8 @@ import weka.core.Instances;
 public class ResultStatis{
 		static String[] c = {"weka.classifiers.bayes.NaiveBayes",
 			"weka.classifiers.trees.J48",
-			"weka.classifiers.functions.SMO","classify.base.MyIsolationForest","classify.base.MyIsolationForest"};
-
-			//,"weka.classifiers.trees.MyIsolationForest"//"classify.base.NewIsolationForest"};
+			"weka.classifiers.functions.SMO"};
+			//,"classify.base.MyIsolationForest","classify.base.MyIsolationForest"
 		static String m_class = "change_prone";//"bug_introducing";//"bug_introducingCopy";//
 		
 		public static void main(String[] args) throws Exception {
@@ -54,22 +53,22 @@ public class ResultStatis{
 			//Calendar calendar = Calendar.getInstance();		
 			
 			String tempPath  = Config.data_folder.substring(Config.total_folder.length());
-			String out = resultFolder + tempPath.substring(0,tempPath.indexOf("//")) + "_result_linear"+".xls";
+			String out = resultFolder + tempPath.substring(0,tempPath.indexOf("//")) + "_result"+".xls";
 			System.out.println("Output Path:" + out);
 			File output = new File(out);
-	    	String[] head = {"classifier","bag","accuracy","gmean","recall-0","recall-1","precision-0","precision-1","fMeasure-0","fMeasure-1","AUC","time"};	    	
+	    	String[] head = {"Classifier","Bag","accuracy","gmean","recall-0","recall-1","precision-0","precision-1","fMeasure-0","fMeasure-1","AUC","time","Project"};	    	
 			String[] methods = {"Simple","Bagging","Undersample","UnderBag", "Oversample",	"OverBag", "SMOTE", "SMOTEBag"};//,"SMOTELog","OverLog","UnderLog"
 			int cnt = c.length;
 			
 			String[][] result = new String[(cnt)*methods.length][12];
-			double[] temp = new double[12];
+			double[] temp = new double[13];
 
 			OtherEvaluation eval = null;
 			weka.classifiers.Classifier clas = null;
 			
 			int m =0;
 			int classIndex = 0;
-			double run_times = 5;
+			double run_times = 10;
 			
 			//inputFile = Config.select_folder + project;
 			System.out.println(project);
@@ -212,7 +211,7 @@ public class ResultStatis{
 					if(i==4){
 			        	result[m][1] = String.valueOf(((MyIsolationForest)clas).getAjust());
 			        }else{
-			        	result[m][1] = methods[j];
+			        	result[m][1] = methods[j].substring(methods[j].lastIndexOf("."));
 			        }
 					result[m][2] = String.valueOf(temp[2]/run_times);
 			        result[m][3] = String.valueOf(temp[3]/run_times);
@@ -224,10 +223,10 @@ public class ResultStatis{
 			        result[m][9] = String.valueOf(temp[9]/run_times);
 			        result[m][10] = String.valueOf(temp[10]/run_times);	
 			        result[m][11] = String.valueOf(time/10) + "ms";
-			        
+			        result[m][12] = project.substring(project.lastIndexOf("\\")+1,project.lastIndexOf("."));
 			        m++;
+			        
 			        for(int p = 0 ; p < 12; p++) temp[p] = 0;
-					
 				}
 			}
 		    FileUtil.exportFile(result, out, project, sheet, head);

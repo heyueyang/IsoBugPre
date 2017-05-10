@@ -156,7 +156,8 @@ public class SktestData{
 						}
 						
 						
-						result[m][0] = cc[i]+mm[j];
+						result[m][0] = project.substring(project.lastIndexOf("\\")+1,project.lastIndexOf("."));
+						result[m][1] = cc[i]+mm[j];
 						result[m][2] = String.valueOf(1-eval.errorRate());
 				        result[m][3] = String.valueOf(Math.sqrt(eval.recall(0)*eval.recall(1)));
 				        result[m][4] = String.valueOf(eval.recall(0));
@@ -166,7 +167,7 @@ public class SktestData{
 				        result[m][8] = String.valueOf(eval.fMeasure(0));
 				        result[m][9] = String.valueOf(eval.fMeasure(1));
 				        result[m][10] = String.valueOf(eval.areaUnderROC(0));	
-				        System.out.println(result[m][0]+"-"+t);
+				        System.out.println(result[m][1]+"-"+t);
 				        m++;
 				        
 				    }
