@@ -60,7 +60,7 @@ public class ResultStatis{
 			String[] methods = {"Simple","Bagging","Undersample","UnderBag", "Oversample",	"OverBag", "SMOTE", "SMOTEBag"};//,"SMOTELog","OverLog","UnderLog"
 			int cnt = c.length;
 			
-			String[][] result = new String[(cnt)*methods.length][12];
+			String[][] result = new String[(cnt)*methods.length][13];
 			double[] temp = new double[13];
 
 			OtherEvaluation eval = null;
@@ -211,7 +211,7 @@ public class ResultStatis{
 					if(i==4){
 			        	result[m][1] = String.valueOf(((MyIsolationForest)clas).getAjust());
 			        }else{
-			        	result[m][1] = methods[j].substring(methods[j].lastIndexOf("."));
+			        	result[m][1] = methods[j];
 			        }
 					result[m][2] = String.valueOf(temp[2]/run_times);
 			        result[m][3] = String.valueOf(temp[3]/run_times);
